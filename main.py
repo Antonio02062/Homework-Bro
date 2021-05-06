@@ -6,8 +6,6 @@ from PIL import Image, ImageTk
 from assets import *
 #from addHwk import addHwk
 
-
-
 #   hago un objeto mi ventana principal, le mando la ventana
 class mainWindow():
     def __init__(self, window):
