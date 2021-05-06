@@ -15,7 +15,7 @@ class mainWindow():
         self.mainWin.resizable(False, False) # <- falso en 'x' y en 'y'
         self.mainWin.config(background=mainColor)
         self.mainWin.iconphoto(True, PhotoImage(file="img/windowIcon.png"))
-        #              ^-- Esto significa que se ¿hereda a otras ventanas?
+        #                       ^-- Esto significa que se ¿hereda a otras ventanas?
 
         buttonStyle = ttk.Style()
         buttonStyle.configure(
