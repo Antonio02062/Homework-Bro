@@ -4,33 +4,33 @@ from PIL import Image, ImageTk
 
 from assets import *
 
-class addHwkWindow():
+def mostrar():
+    win = Tk()
+    addHwk(win)
+    win.mainloop()
+
+class addHwk:
     def __init__(self, window):
         self.addWindow = window
-        self.addWindow.geometry("500x500")
         self.addWindow.title("Añadir tarea")
-        #self.addWindow.resizable(False, False) # <- falso en 'x' y en 'y'
+        self.addWindow.resizable(False, False) # <- falso en 'x' y en 'y'
         self.addWindow.config(background=mainColor)
-        self.addWindow.iconphoto(True, PhotoImage(file="img/windowIcon.png"))
+        #self.addWindow.iconphoto(True, PhotoImage(file="img/windowIcon.png"))
+        self.addWindow.config(pady = 80, padx = 80)
         
+        def linea(self, titulo, colorEntrada, renglon):
+            Label(self.addWindow, text = titulo, bg = mainColor, fg = secondaryColor ,font = (mainColor, 13)).grid(column = 0, row = renglon, sticky = W+E, pady = 5)
+            self.name = Entry(self.addWindow, bg = colorEntrada ,relief = "flat", font = (mainFont, 13), justify = "center")
+            self.name.grid(column = 1, row = renglon, sticky = W + E, ipady = 4)
         
-
-        Label(self.addWindow, text = "Nombre", bg = secondaryColor2, font = mainColor, justify = "left").grid(column = 0, row = 0, sticky = W+E)
-        self.name = Entry(self.addWindow, bg = secondaryColor,relief = "flat", font = mainFont)
-        self.name.grid(column = 1, row = 0, sticky = W + E)
-        #Label(self.addWindow, text = "Nombre", bg = secondaryColor3, font = mainColor)
-
-        self.addWindow.grid_columnconfigure(0, weight  = 2)
+        linea(self, titulo="Nombre", colorEntrada=secondaryColor2, renglon=0)
+        linea(self, titulo="Materia", colorEntrada=secondaryColor3, renglon=1)
+        linea(self, titulo="Descripcion", colorEntrada=secondaryColor4, renglon=2)
+        linea(self, titulo="Fecha", colorEntrada=secondaryColor5, renglon=3)
+        linea(self, titulo="Maestro", colorEntrada = secondaryColor, renglon = 4)      
+        
+        self.addWindow.grid_columnconfigure(0, weight  = 1)
         self.addWindow.grid_columnconfigure(1, weight  = 2)
-
-        self.addWindow.grid_rowconfigure(0, weight  = 2)
-        self.addWindow.grid_rowconfigure(1, weight  = 2)
+        self.addWindow.grid_columnconfigure(2, weight  = 2)
 
 
-
-
-
-
-win = Tk()
-addHwk = addHwkWindow(win)
-win.mainloop()

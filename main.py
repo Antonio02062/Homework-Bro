@@ -1,7 +1,7 @@
 from tkinter import *
 from tkinter import ttk
 from PIL import Image, ImageTk
-
+from addHwk import mostrar
 #from addHwk import openAddHwk
 from assets import *
 #from addHwk import addHwk
@@ -38,7 +38,7 @@ class mainWindow():
         addHwkImg = addHwkImg.resize((312, 62), Image.ANTIALIAS)
         addHwkImg = ImageTk.PhotoImage(addHwkImg)
 
-        addHwkButton = ttk.Button(self.mainWin, image=addHwkImg, style="buttonStyle.TButton")
+        addHwkButton = ttk.Button(self.mainWin, image=addHwkImg, style="buttonStyle.TButton", command = mostrar)
         addHwkButton.image = addHwkImg
         addHwkButton.grid(column=1, row=0)
 
