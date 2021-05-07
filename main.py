@@ -2,9 +2,8 @@ from tkinter import *
 from tkinter import ttk
 from PIL import Image, ImageTk
 from addHwk import mostrar
-#from addHwk import openAddHwk
+
 from assets import *
-#from addHwk import addHwk
 
 #   hago un objeto mi ventana principal, le mando la ventana
 class mainWindow():
@@ -30,7 +29,7 @@ class mainWindow():
         logo = logo.resize((400, 400), Image.ANTIALIAS)
         logo = ImageTk.PhotoImage(logo)
 
-        logoLabel = Label(image=logo, borderwidth=0)
+        logoLabel = Label(self.mainWin, image=logo, borderwidth=0)
         logoLabel.image = logo
         logoLabel.grid(column=0, row=0, rowspan=3)
         
