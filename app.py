@@ -44,7 +44,7 @@ class mainWindow():
 
         logoLabel = Label(self.mainWin, image=logo, borderwidth=0)
         logoLabel.image = logo
-        logoLabel.grid(column=0, row=0, rowspan=3)
+        logoLabel.grid(column=0, row=0, rowspan=2)
         
         addHwkImg = Image.open('img/addHwkImage.png')
         addHwkImg = addHwkImg.resize((312, 62), Image.ANTIALIAS)
@@ -54,32 +54,25 @@ class mainWindow():
         addHwkButton.image = addHwkImg
         addHwkButton.grid(column=1, row=0, padx = 40)
 
-        seeHwkImg = Image.open('img/seeHwkImage.png')
-        seeHwkImg = seeHwkImg.resize((312, 62), Image.ANTIALIAS)
-        seeHwkImg = ImageTk.PhotoImage(seeHwkImg)
-
-        seeHwkButton = ttk.Button(self.mainWin, image=seeHwkImg, style="buttonStyle.TButton")
-        seeHwkButton.image = seeHwkImg
-        seeHwkButton.grid(column=1, row=1)
-
         lessHwkImg = Image.open('img/lessHwkImage.png')
         lessHwkImg = lessHwkImg.resize((312, 62), Image.ANTIALIAS)
         lessHwkImg = ImageTk.PhotoImage(lessHwkImg)
 
         quitHwkButton = ttk.Button(self.mainWin, image=lessHwkImg, style="buttonStyle.TButton", command = mostrarLess)
         quitHwkButton.image = lessHwkImg
-        quitHwkButton.grid(column=1, row=2)
+        quitHwkButton.grid(column=1, row=1)
 
 def mostrarAdd():
         win = Toplevel()
         # No se pueden crear muchas instancias de Tk por que se usa Toplevel
-        añadirVen = addHwk(win)
+        addHwk(win)
         win.mainloop()
 
 class addHwk:
     # Se almacena la base de datos en una variable
-    db_name = 'tareas.db'
+    
     def __init__(self, window):
+        self.db_name = 'tareas.db'
         self.addWindow = window
         self.addWindow.title("Añadir tarea")
         self.addWindow.resizable(False, False) # <- falso en 'x' y en 'y'
@@ -159,8 +152,20 @@ class addHwk:
         
         else:
             messagebox.showinfo(title="Hey!", message="Por favor no dejes ningún campo en blanco")       
-                
-
+        
+        self.get_tareas()
+    
+    def get_tareas(self):
+        # Se limpia la tabla
+        """records = self.tree.get_children()
+        for element in records:
+            self.tree.delete(element)"""
+        # Se consutan los datos
+        query = 'SELECT * FROM tareas ORDER BY id ASC'
+        self.run_query(query)
+        # Se rellenan los datos
+        """for row in db_rows:
+            self.tree.insert('', '0', text=(row[1]), values=(row[2], row[3], row[4], row[5]))"""
 
 def mostrarLess():
     win = Toplevel()
@@ -170,8 +175,8 @@ def mostrarLess():
 
 class lessHwk:
 
-    db_name = 'tareas.db'
     def __init__(self, window):
+        self.db_name = 'tareas.db'
         self.lessWindow = window
         self.lessWindow.title("Borrar tarea")
         self.lessWindow.resizable(False, False) # <- falso en 'x' y en 'y'
@@ -191,9 +196,9 @@ class lessHwk:
         lessBtnImg = lessBtnImg.resize((150, 50), Image.ANTIALIAS)
         lessBtnImg = ImageTk.PhotoImage(lessBtnImg)
 
-        quitButton = ttk.Button(self.lessWindow, image=lessBtnImg, style="buttonStyle.TButton")
+        quitButton = ttk.Button(self.lessWindow, image=lessBtnImg, command = self.borrar_tarea)
         quitButton.image = lessBtnImg
-        quitButton.grid(column=0, row=11, columnspan = 2)
+        quitButton.grid(column=0, row=11, columnspan = 2, pady = 20)
 
         self.tree = ttk.Treeview(self.lessWindow, height=10, columns=('#1', '#2', '#3', '#4'))
         self.tree.grid(column=0, row=10, columnspan=2)
@@ -202,15 +207,17 @@ class lessHwk:
         self.tree.heading('#2', text='Maestro', anchor=CENTER)
         self.tree.heading('#3', text='Descripción', anchor=CENTER)
         self.tree.heading('#4', text='Fecha', anchor=CENTER)
-    # método que hace la conexión a la base de datos
-    # cada vez que se quiera hacer una acción con la misma
+
+        self.get_tareas()
+        # método que hace la conexión a la base de datos
+        # cada vez que se quiera hacer una acción con la misma
     def run_query(self, query, parametros=()):
         with sqlite3.connect(self.db_name) as conn:
             cursor = conn.cursor()
             resultado = cursor.execute(query, parametros)
             conn.commit()
         return resultado
-
+    
     def get_tareas(self):
         # Se limpia la tabla
         records = self.tree.get_children()
@@ -222,8 +229,19 @@ class lessHwk:
         # Se rellenan los datos
         for row in db_rows:
             self.tree.insert('', '0', text=(row[1]), values=(row[2], row[3], row[4], row[5]))
-
-
+    
+    # Borrar una tarea seleccionada
+    def borrar_tarea(self):
+        try:
+            self.tree.item(self.tree.selection())['text']
+        except IndexError:
+            messagebox.showinfo(title="Hey!", message="¿Que quieres elimininar?") 
+            return
+        nombre = self.tree.item(self.tree.selection())['text']
+        query = 'DELETE FROM tareas WHERE nombre = ?'
+        self.run_query(query, (nombre, ))
+        messagebox.showinfo(title="Ojo!", message="La tarea ha sido borrada!") 
+        self.get_tareas()
 
 
 win = Tk()
