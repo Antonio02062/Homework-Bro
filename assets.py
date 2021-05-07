@@ -1,6 +1,3 @@
-# vamos
-# comentario que dice ayuda
-#terecer comentario albgit 
 # <- Colores ->
 
 mainColor = "#2E4053" # gris
