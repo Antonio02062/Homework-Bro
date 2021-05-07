@@ -1,7 +1,9 @@
 from tkinter import *
-from tkinter import ttk
+from tkinter import ttk , messagebox
 from PIL import Image, ImageTk
 import sqlite3
+
+
 
 # <- Colores y fuente ->
 
@@ -50,7 +52,7 @@ class mainWindow():
 
         addHwkButton = ttk.Button(self.mainWin, image=addHwkImg, style="buttonStyle.TButton", command = mostrarAdd)
         addHwkButton.image = addHwkImg
-        addHwkButton.grid(column=1, row=0)
+        addHwkButton.grid(column=1, row=0, padx = 40)
 
         seeHwkImg = Image.open('img/seeHwkImage.png')
         seeHwkImg = seeHwkImg.resize((312, 62), Image.ANTIALIAS)
@@ -71,13 +73,12 @@ class mainWindow():
 def mostrarAdd():
         win = Toplevel()
         # No se pueden crear muchas instancias de Tk por que se usa Toplevel
-        addHwk(win)
+        añadirVen = addHwk(win)
         win.mainloop()
 
 class addHwk:
     # Se almacena la base de datos en una variable
     db_name = 'tareas.db'
-
     def __init__(self, window):
         self.addWindow = window
         self.addWindow.title("Añadir tarea")
@@ -93,7 +94,6 @@ class addHwk:
         logoLabelAdd = Label(self.addWindow, image = logoT, borderwidth=0)
         logoLabelAdd.image = logoT
         logoLabelAdd.grid(column=0, row=0, columnspan = 2)
-
 
         Label(self.addWindow, text = "Nombre", bg = mainColor, fg = secondaryColor ,font = (mainColor, 13)).grid(column = 0, row = 1, sticky = W+E, pady = 5)
         self.nombre = Entry(self.addWindow, bg = secondaryColor2 ,relief = "flat", font = (mainFont, 13), justify = "center")
@@ -120,13 +120,46 @@ class addHwk:
         addBtnImg = addBtnImg.resize((150, 50), Image.ANTIALIAS)
         addBtnImg = ImageTk.PhotoImage(addBtnImg)
 
-        logoLabelAdd = ttk.Button(self.addWindow, image=addBtnImg, style="buttonStyle.TButton")
+        logoLabelAdd = ttk.Button(self.addWindow, image=addBtnImg, style="buttonStyle.TButton", command = self.add_tareas)
         logoLabelAdd.image = addBtnImg
-        logoLabelAdd.grid(column=0, row=6, columnspan = 2)
+        logoLabelAdd.grid(column=0, row=6, columnspan = 2, pady = 20)
 
         self.addWindow.grid_columnconfigure(0, weight  = 1)
-        self.addWindow.grid_columnconfigure(1, weight  = 2)       
-            
+        self.addWindow.grid_columnconfigure(1, weight  = 2)
+
+    # método que hace la conexión a la base de datos
+    # cada vez que se quiera hacer una acción con la misma
+    def run_query(self, query, parametros=()):
+        with sqlite3.connect(self.db_name) as conn:
+            cursor = conn.cursor()
+            resultado = cursor.execute(query, parametros)
+            conn.commit()
+        return resultado
+
+    # Validar que todos los campos tengan informacion
+    def validation(self):
+        return (len(self.nombre.get()) != 0 and len(self.materia.get()) != 0 and len(self.maestro.get()) != 0 and
+                len(self.descripcion.get()) != 0 and len(self.fecha.get()) != 0)
+
+    # Añade las tareas a la base de datos
+    def add_tareas(self):
+        if self.validation():
+            query = 'INSERT INTO tareas VALUES(NULL, ?, ? , ?, ?, ?)'
+            parametros=(self.nombre.get(), self.materia.get(), self.maestro.get(),
+                        self.descripcion.get(), self.fecha.get())
+            self.run_query(query, parametros)
+            #self.message['text'] = 'La tarea ha sido añadido de manera exitosa'
+            messagebox.showinfo(title="Bien!", message="La La tarea ha sido añadido de manera exitosa")
+            # Limpia los entry
+            self.nombre.delete(0, END)
+            self.materia.delete(0, END)
+            self.maestro.delete(0, END)
+            self.descripcion.delete(0, END)
+            self.fecha.delete(0, END)
+        
+        else:
+            messagebox.showinfo(title="Hey!", message="Por favor no dejes ningún campo en blanco")       
+                
 
 
 def mostrarLess():
@@ -136,6 +169,8 @@ def mostrarLess():
     win.mainloop()
 
 class lessHwk:
+
+    db_name = 'tareas.db'
     def __init__(self, window):
         self.lessWindow = window
         self.lessWindow.title("Borrar tarea")
@@ -150,7 +185,7 @@ class lessHwk:
 
         logoLabelAdd = Label(self.lessWindow, image = logoT, borderwidth=0)
         logoLabelAdd.image = logoT
-        logoLabelAdd.grid(column=0, row=0)
+        logoLabelAdd.grid(column=0, row=0, columnspan = 2)
 
         lessBtnImg = Image.open('img/lessHwkButton.png')
         lessBtnImg = lessBtnImg.resize((150, 50), Image.ANTIALIAS)
@@ -158,11 +193,38 @@ class lessHwk:
 
         quitButton = ttk.Button(self.lessWindow, image=lessBtnImg, style="buttonStyle.TButton")
         quitButton.image = lessBtnImg
-        quitButton.grid(column=0, row=2)
-    
+        quitButton.grid(column=0, row=11, columnspan = 2)
 
-    
-    
+        self.tree = ttk.Treeview(self.lessWindow, height=10, columns=('#1', '#2', '#3', '#4'))
+        self.tree.grid(column=0, row=10, columnspan=2)
+        self.tree.heading('#0', text='Nombre', anchor=CENTER)
+        self.tree.heading('#1', text='Materia', anchor=CENTER)
+        self.tree.heading('#2', text='Maestro', anchor=CENTER)
+        self.tree.heading('#3', text='Descripción', anchor=CENTER)
+        self.tree.heading('#4', text='Fecha', anchor=CENTER)
+    # método que hace la conexión a la base de datos
+    # cada vez que se quiera hacer una acción con la misma
+    def run_query(self, query, parametros=()):
+        with sqlite3.connect(self.db_name) as conn:
+            cursor = conn.cursor()
+            resultado = cursor.execute(query, parametros)
+            conn.commit()
+        return resultado
+
+    def get_tareas(self):
+        # Se limpia la tabla
+        records = self.tree.get_children()
+        for element in records:
+            self.tree.delete(element)
+        # Se consutan los datos
+        query = 'SELECT * FROM tareas ORDER BY id ASC'
+        db_rows = self.run_query(query)
+        # Se rellenan los datos
+        for row in db_rows:
+            self.tree.insert('', '0', text=(row[1]), values=(row[2], row[3], row[4], row[5]))
+
+
+
 
 win = Tk()
 application = mainWindow(win)
