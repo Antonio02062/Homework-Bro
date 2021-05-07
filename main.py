@@ -1,7 +1,8 @@
 from tkinter import *
 from tkinter import ttk
 from PIL import Image, ImageTk
-from addHwk import mostrar
+from addHwk import mostrarAdd
+from lessHwk import mostrarLess
 
 from assets import *
 
@@ -37,7 +38,7 @@ class mainWindow():
         addHwkImg = addHwkImg.resize((312, 62), Image.ANTIALIAS)
         addHwkImg = ImageTk.PhotoImage(addHwkImg)
 
-        addHwkButton = ttk.Button(self.mainWin, image=addHwkImg, style="buttonStyle.TButton", command = mostrar)
+        addHwkButton = ttk.Button(self.mainWin, image=addHwkImg, style="buttonStyle.TButton", command = mostrarAdd)
         addHwkButton.image = addHwkImg
         addHwkButton.grid(column=1, row=0)
 
@@ -53,7 +54,7 @@ class mainWindow():
         lessHwkImg = lessHwkImg.resize((312, 62), Image.ANTIALIAS)
         lessHwkImg = ImageTk.PhotoImage(lessHwkImg)
 
-        quitHwkButton = ttk.Button(self.mainWin, image=lessHwkImg, style="buttonStyle.TButton")
+        quitHwkButton = ttk.Button(self.mainWin, image=lessHwkImg, style="buttonStyle.TButton", command = mostrarLess)
         quitHwkButton.image = lessHwkImg
         quitHwkButton.grid(column=1, row=2)
         

@@ -4,7 +4,7 @@ from PIL import Image, ImageTk
 
 from assets import *
 
-def mostrar():
+def mostrarAdd():
     win = Toplevel()
     # No se pueden crear muchas instancias de Tk por que se usa Toplevel
     addHwk(win)
