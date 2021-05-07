@@ -3,8 +3,6 @@ from tkinter import ttk , messagebox
 from PIL import Image, ImageTk
 import sqlite3
 
-
-
 # <- Colores y fuente ->
 
 mainColor = "#2E4053" # gris
@@ -97,7 +95,7 @@ class addHwk:
         self.materia = Entry(self.addWindow, bg = secondaryColor3 ,relief = "flat", font = (mainFont, 13), justify = "center")
         self.materia.grid(column = 1, row = 2, sticky = W + E, ipady = 4)
 
-        Label(self.addWindow, text = "Descripcion", bg = mainColor, fg = secondaryColor ,font = (mainColor, 13)).grid(column = 0, row = 3, sticky = W+E, pady = 5)
+        Label(self.addWindow, text = "Descripción", bg = mainColor, fg = secondaryColor ,font = (mainColor, 13)).grid(column = 0, row = 3, sticky = W+E, pady = 5)
         self.descripcion = Entry(self.addWindow, bg = secondaryColor4 ,relief = "flat", font = (mainFont, 13), justify = "center")
         self.descripcion.grid(column = 1, row = 3, sticky = W + E, ipady = 4)
 
@@ -154,6 +152,7 @@ class addHwk:
             messagebox.showinfo(title="Hey!", message="Por favor no dejes ningún campo en blanco")       
         
         self.get_tareas()
+        self.addWindow.destroy()
     
     def get_tareas(self):
         # Se limpia la tabla
@@ -200,6 +199,8 @@ class lessHwk:
         quitButton.image = lessBtnImg
         quitButton.grid(column=0, row=11, columnspan = 2, pady = 20)
 
+
+
         self.tree = ttk.Treeview(self.lessWindow, height=10, columns=('#1', '#2', '#3', '#4'))
         self.tree.grid(column=0, row=10, columnspan=2)
         self.tree.heading('#0', text='Nombre', anchor=CENTER)
@@ -208,6 +209,7 @@ class lessHwk:
         self.tree.heading('#3', text='Descripción', anchor=CENTER)
         self.tree.heading('#4', text='Fecha', anchor=CENTER)
 
+        self.tree.tag_configure('prob',background = "black")
         self.get_tareas()
         # método que hace la conexión a la base de datos
         # cada vez que se quiera hacer una acción con la misma
