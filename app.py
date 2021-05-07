@@ -18,6 +18,7 @@ mainFont = "Raleway"
 
 # <- Objeto de mi ventana principal
 class mainWindow():
+
     def __init__(self, window):
         self.mainWin = window
         #win.geometry("400x500")
@@ -61,13 +62,11 @@ class mainWindow():
         quitHwkButton.grid(column=1, row=1)
 
 def mostrarAdd():
-        win = Toplevel()
-        # No se pueden crear muchas instancias de Tk por que se usa Toplevel
+        win = Toplevel() # <- No se pueden crear muchas instancias de Tk por que se usa Toplevel
         addHwk(win)
         win.mainloop()
 
 class addHwk:
-    # Se almacena la base de datos en una variable
     
     def __init__(self, window):
         self.db_name = 'tareas.db'
@@ -154,7 +153,7 @@ class addHwk:
         self.get_tareas()
         self.addWindow.destroy()
     
-    def get_tareas(self):
+    def get_tareas(self): # <- Obtine las tareas
         # Se limpia la tabla
         """records = self.tree.get_children()
         for element in records:
@@ -165,8 +164,9 @@ class addHwk:
         # Se rellenan los datos
         """for row in db_rows:
             self.tree.insert('', '0', text=(row[1]), values=(row[2], row[3], row[4], row[5]))"""
+        # <- Eliminamos estas lienas ya que tree no pertenece a esta clase
 
-def mostrarLess():
+def mostrarLess(): # <- Esta funcion la uso para instanciar el objeto que abre las ventanas
     win = Toplevel()
     # No se pueden crear muchas instancias de Tk por que se usa Toplevel
     lessHwk(win)
@@ -175,12 +175,12 @@ def mostrarLess():
 class lessHwk:
 
     def __init__(self, window):
+
         self.db_name = 'tareas.db'
         self.lessWindow = window
         self.lessWindow.title("Borrar tarea")
         self.lessWindow.resizable(False, False) # <- falso en 'x' y en 'y'
         self.lessWindow.config(background=mainColor)
-        #self.addWindow.iconphoto(False, PhotoImage(file="img/windowIcon.png"))
         self.lessWindow.config( padx = 80)
         
         logoT = Image.open('img/mainImage3.png')
@@ -199,8 +199,6 @@ class lessHwk:
         quitButton.image = lessBtnImg
         quitButton.grid(column=0, row=11, columnspan = 2, pady = 20)
 
-
-
         self.tree = ttk.Treeview(self.lessWindow, height=10, columns=('#1', '#2', '#3', '#4'))
         self.tree.grid(column=0, row=10, columnspan=2)
         self.tree.heading('#0', text='Nombre', anchor=CENTER)
@@ -211,8 +209,9 @@ class lessHwk:
 
         self.tree.tag_configure('prob',background = "black")
         self.get_tareas()
-        # método que hace la conexión a la base de datos
-        # cada vez que se quiera hacer una acción con la misma
+
+    # método que hace la conexión a la base de datos
+    # cada vez que se quiera hacer una acción con la misma
     def run_query(self, query, parametros=()):
         with sqlite3.connect(self.db_name) as conn:
             cursor = conn.cursor()
@@ -235,7 +234,7 @@ class lessHwk:
     # Borrar una tarea seleccionada
     def borrar_tarea(self):
         try:
-            self.tree.item(self.tree.selection())['text']
+            self.tree.item(self.tree.selection())['text'][0]
         except IndexError:
             messagebox.showinfo(title="Hey!", message="¿Que quieres elimininar?") 
             return
@@ -249,3 +248,5 @@ class lessHwk:
 win = Tk()
 application = mainWindow(win)
 win.mainloop()
+
+# Atte. el equipo azul
